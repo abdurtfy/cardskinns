@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": "{*.html,*.js,*.css,data/**,uploads/**}",
+      "includeFiles": "**/*.{html,js,css,svg,png,jpg,jpeg,gif,ico,webp}",
       "maxDuration": 30
     }
   },
