@@ -7,8 +7,23 @@ const tls = require("node:tls");
 loadEnvFile(path.join(__dirname, ".env"));
 
 const PORT = Number(process.env.PORT || 4173);
-const PUBLIC_DIR = __dirname;
-const DATA_DIR = path.join(__dirname, "data");
+const PUBLIC_DIR = (() => {
+  const candidates = [
+    __dirname,
+    process.cwd(),
+    path.join(__dirname, ".."),
+    "/var/task",
+  ];
+  for (const dir of candidates) {
+    try {
+      if (dir && fs.existsSync(path.join(dir, "index.html"))) {
+        return path.resolve(dir);
+      }
+    } catch (_) {}
+  }
+  return __dirname;
+})();
+const DATA_DIR = path.join(PUBLIC_DIR, "data");
 const ORDERS_FILE = path.join(DATA_DIR, "orders.json");
 const WEBHOOK_EVENTS_FILE = path.join(DATA_DIR, "webhook-events.json");
 const PRODUCTS_FILE = path.join(DATA_DIR, "products.json");
