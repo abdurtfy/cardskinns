@@ -1,26 +1,15 @@
 {
   "name": "carddesign-skin",
   "version": "1.0.0",
-  "description": "MVP storefront and backend for a premium card-skin ecommerce site",
+  "description": "Premium card skin ecommerce store",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "serve": "node server.js"
+    "dev": "node server.js"
   },
   "dependencies": {},
-  "devDependencies": {},
   "engines": {
     "node": "24.x"
-  },
-  "keywords": [
-    "ecommerce",
-    "cards",
-    "store",
-    "razorpay",
-    "shiprocket"
-  ],
-  "author": "",
-  "license": "ISC"
+  }
 }
