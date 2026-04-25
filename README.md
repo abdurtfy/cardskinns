@@ -1,120 +1,109 @@
-# Razorpay eBook Automation Bot
+# carddesign.skin
 
-A lightweight, backend-only service that automatically emails a Google Drive eBook link to customers the moment a Razorpay payment is captured. No database, no frontend, no manual work.
+MVP storefront and backend for a premium card-skin ecommerce site.
 
----
-
-## Project Structure
-
-```
-razorpay-ebook-bot/
-├── app.py            # Flask webhook listener & signature verification
-├── email_sender.py   # SMTP email composition and delivery
-├── tests.py          # Unit tests (no network/SMTP calls needed)
-├── requirements.txt  # Python dependencies
-├── .env.example      # All required environment variables (copy → .env)
-└── README.md
-```
-
----
-
-## Quick Start
-
-### 1. Clone & install dependencies
+## Run locally
 
 ```bash
-git clone <your-repo>
-cd razorpay-ebook-bot
-python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+node server.js
 ```
 
-### 2. Configure environment variables
+Open:
+
+```text
+http://localhost:4173
+```
+
+## Current MVP
+
+- Product-first storefront with no landing-page filler
+- Product catalog without filters or search
+- Direct add-to-cart CTA on every product
+- Persistent cart using `localStorage`
+- Separate checkout page
+- Local admin orders panel at `/admin.html`
+- Backend API routes for Razorpay order creation and verification
+- Backend API routes for Shiprocket serviceability and order creation
+- Local order persistence in `data/orders.json`
+
+## Environment Variables
+
+Create a local `.env` file using `.env.example` as the template, then add:
 
 ```bash
-cp .env.example .env
-# Open .env and fill in every value
+export RAZORPAY_KEY_ID="rzp_live_or_test_key"
+export RAZORPAY_KEY_SECRET="razorpay_secret"
+export SHIPROCKET_EMAIL="shiprocket_login_email"
+export SHIPROCKET_PASSWORD="shiprocket_password"
+export SHIPROCKET_PICKUP_LOCATION="Primary"
+export ADMIN_PASSWORD="change_this_password"
+export RESEND_API_KEY="resend_api_key"
+export EMAIL_FROM="orders@carddesign.skin"
+export SMTP_HOST="smtp.gmail.com"
+export SMTP_PORT="465"
+export SMTP_USER="your_email@gmail.com"
+export SMTP_PASS="gmail_app_password"
+export RAZORPAY_WEBHOOK_SECRET="change_this_webhook_secret"
+export SHIPROCKET_WEBHOOK_TOKEN="change_this_shiprocket_token"
 ```
 
-| Variable | Description |
-|---|---|
-| `RAZORPAY_WEBHOOK_SECRET` | Secret from Razorpay Dashboard → Webhooks |
-| `SMTP_SERVER` | e.g. `smtp.gmail.com` |
-| `SMTP_PORT` | `587` for TLS |
-| `SMTP_USER` | Your Gmail address |
-| `SMTP_PASSWORD` | Gmail **App Password** (not your login password) |
-| `EBOOK_DRIVE_LINK` | Public Google Drive share link to your eBook |
-| `EMAIL_SUBJECT` | Subject line for the delivery email |
-| `EMAIL_BODY_TEMPLATE` | Body text — use `{name}` and `{link}` as placeholders |
+Without these values, the backend runs in demo mode so the flow can still be tested.
+The `.env` file is ignored by git and is loaded by `server.js` automatically.
 
-> **Gmail App Password**: Go to [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords), create an app password for "Mail", and paste the 16-character code into `SMTP_PASSWORD`.
+### Razorpay
 
-### 3. Run the server
+Implemented routes:
 
-```bash
-# Development
-python app.py
+- `POST /api/razorpay/order`
+- `POST /api/razorpay/verify`
+- `POST /api/webhooks/razorpay`
 
-# Production (Gunicorn)
-gunicorn app:app --bind 0.0.0.0:5000 --workers 2
+Still recommended before production:
+
+- Persist orders and payment attempts in a database
+- Add refund handling if you enable refunds from the admin panel later
+
+### Shiprocket
+
+Implemented routes:
+
+- `POST /api/shiprocket/serviceability`
+- `POST /api/webhooks/shiprocket?token=SHIPROCKET_WEBHOOK_TOKEN`
+- Shiprocket order creation after Razorpay verification
+- Order confirmation and shipping follow-up email hooks after payment
+
+### Webhook URLs
+
+Use these public URLs after deployment:
+
+```text
+https://your-domain.com/api/webhooks/razorpay
+https://your-domain.com/api/webhooks/shiprocket?token=SHIPROCKET_WEBHOOK_TOKEN
 ```
 
-### 4. Run the tests
+For Razorpay, set the dashboard webhook secret to the same value as `RAZORPAY_WEBHOOK_SECRET`.
 
-```bash
-python -m pytest tests.py -v
+Still recommended before production:
+
+- Store Shiprocket order IDs and AWB/tracking data
+- Build admin label generation and fulfillment views
+- Send customer email/SMS notifications
+
+## Admin Panel
+
+Open:
+
+```text
+http://localhost:4173/admin.html
 ```
 
----
+The admin panel shows order IDs, addresses, customer contact details, payment status, Shiprocket status, totals, and item quantities.
+The admin panel is protected by an HTTP-only session cookie. Set `ADMIN_PASSWORD` in `.env`, then log in at `/admin-login.html`.
 
-## Exposing the Webhook (Local Development)
+## Suggested Next Build Step
 
-Use [ngrok](https://ngrok.com/) or [localtunnel](https://github.com/localtunnel/localtunnel) to get a public HTTPS URL:
+Move this MVP into a database-backed app with:
 
-```bash
-ngrok http 5000
-# → Forwarding: https://abc123.ngrok.io → localhost:5000
-```
-
-Your webhook URL will be:
-```
-https://abc123.ngrok.io/webhook/razorpay
-```
-
----
-
-## Razorpay Dashboard Setup
-
-1. Go to **Settings → Webhooks → Add New Webhook**.
-2. Set the **URL** to your public endpoint (`/webhook/razorpay`).
-3. Set a **Secret** and copy it into `RAZORPAY_WEBHOOK_SECRET` in your `.env`.
-4. Enable the **`payment.captured`** event.
-5. Save.
-
----
-
-## Data Flow
-
-```
-Customer pays →  Razorpay sends webhook  →  Server verifies signature
-                                        →  Extracts email + name
-                                        →  Sends eBook email via SMTP
-```
-
----
-
-## Deployment Options
-
-| Platform | Command / Notes |
-|---|---|
-| **Railway / Render** | Connect repo, set env vars in dashboard, deploy. |
-| **Heroku** | `heroku create`, `heroku config:set KEY=val`, `git push heroku main` |
-| **VPS (Ubuntu)** | Run with Gunicorn behind Nginx; use `systemd` for process management. |
-
----
-
-## Security Notes
-
-- Webhook signature is verified on **every** request using `hmac.compare_digest` (constant-time, safe from timing attacks).
-- Never commit your `.env` file. It is already listed in `.gitignore`.
-- Use environment variables or a secrets manager in production — never hardcode credentials.
+- PostgreSQL product, order, and payment tables
+- Admin product/order dashboard
+- Auth-protected admin pages

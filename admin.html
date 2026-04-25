@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | carddesign.skin</title>
+    <meta name="description" content="Admin dashboard for carddesign.skin." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>FREE DELIVERY ON ORDERS OVER ₹490 &nbsp;•&nbsp; BUY 2 GET 1 FREE &nbsp;•&nbsp; FREE DELIVERY ON ORDERS OVER ₹490 &nbsp;•&nbsp; BUY 2 GET 1 FREE &nbsp;•&nbsp;</span>
+        <span>FREE DELIVERY ON ORDERS OVER ₹490 &nbsp;•&nbsp; BUY 2 GET 1 FREE &nbsp;•&nbsp; FREE DELIVERY ON ORDERS OVER ₹490 &nbsp;•&nbsp; BUY 2 GET 1 FREE &nbsp;•&nbsp;</span>
+      </div>
+    </div>
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="carddesign.skin home">
+        <span class="brand-mark"></span>
+        <span>carddesign.skin</span>
+      </a>
+      <nav class="top-nav" aria-label="Primary navigation">
+        <a href="./index.html">Products</a>
+        <a href="./checkout.html">Checkout</a>
+        <a href="./admin.html">Admin</a>
+        <button class="nav-button" id="logoutButton" type="button">Logout</button>
+      </nav>
+    </header>
+
+    <main class="admin-page">
+      <section class="checkout-head" aria-labelledby="adminTitle">
+        <p class="eyebrow">Admin</p>
+        <h1 id="adminTitle">Dashboard</h1>
+      </section>
+
+      <nav class="admin-tabs" role="tablist">
+        <button class="admin-tab active" data-tab="stock" type="button">Stock</button>
+        <button class="admin-tab" data-tab="orders" type="button">Orders</button>
+        <button class="admin-tab" data-tab="images" type="button">Images</button>
+      </nav>
+
+      <section class="admin-section" data-section="stock">
+        <div class="admin-toolbar">
+          <div>
+            <strong>Stock & pricing</strong>
+            <p class="muted">Edit name, price, and stock. Stock 0 marks it out of stock.</p>
+          </div>
+        </div>
+        <div class="admin-catalog" id="catalogList" aria-live="polite">
+          <p class="muted">Loading products...</p>
+        </div>
+      </section>
+
+      <section class="admin-section" data-section="orders" hidden>
+        <div class="admin-toolbar">
+          <div>
+            <strong id="orderCount">0 orders</strong>
+            <p class="muted">Addresses, payment status, and Shiprocket status.</p>
+          </div>
+          <button class="secondary-action" id="refreshOrders" type="button">Refresh</button>
+        </div>
+        <div class="orders-list" id="ordersList" aria-live="polite"></div>
+      </section>
+
+      <section class="admin-section" data-section="images" hidden>
+        <div class="admin-toolbar">
+          <div>
+            <strong>Product images</strong>
+            <p class="muted">Upload a photo per product. Leave empty to use the default gradient.</p>
+          </div>
+        </div>
+        <div class="admin-images" id="imagesList" aria-live="polite">
+          <p class="muted">Loading products...</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="./policy.html">Store Policy</a>
+        <a href="./terms.html">Terms of Service</a>
+        <a href="./shipping.html">Shipping</a>
+      </div>
+      <div class="footer-copy">CARDDESIGN.SKIN © 2026</div>
+    </footer>
+
+    <script src="./admin.js"></script>
+  </body>
+</html>
