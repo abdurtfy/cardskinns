@@ -1,10 +1,8 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.js": {
-      "includeFiles": "**/*.{html,js,css,svg,png,jpg,jpeg,gif,ico,webp}",
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+  "public": false,
+  "buildCommand": "npm install",
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
